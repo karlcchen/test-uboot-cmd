@@ -6,15 +6,13 @@ setenv test-ping 'ping $serverip'; setenv setup-network 'setenv ipaddr 192.168.1
 setenv extra_params 'pci=pcie_bus_safe cpuidle.off=1'; setenv scx_params 'root=LABEL=A rw rootwait'
 setenv extra_params 'pci=pcie_bus_safe'; setenv scx_params 'root=LABEL=A rw rootwait'
 
-# old, use scx_boot_usb
+# scx_boot_usb
 setenv scx_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb 0 $loadaddr $fitname;if itest $? -eq 0;then bootm $loadaddr;fi'
-#setenv bootcmd 'echo Hello Castle Peak!; ver; sysinfo; boardinfo get irv; boardinfo get desc; run scx_boot_usb'
+#setenv bootcmd 'echo Hello Castle Peak!; run inc_loop; saveenv; ver; sysinfo; boardinfo get irv; boardinfo get desc; run scx_boot_usb'
 
 # new use 'boot_usb' instead of scx_boot_usb
-setenv bootcmd 'echo Hello Castle Peak!; ver; sysinfo; boardinfo get irv; boardinfo get desc; run switch_init; run test-ping; run boot_usb'
-
-
-
+setenv bootcmd 'echo Hello Castle Peak!; run inc_loop; saveenv; ver; sysinfo; boardinfo get irv; boardinfo get desc; run switch_init; run test-ping; run boot_usb'
+setenv bootcmd 'echo Hello Castle Peak!; run inc_loop; saveenv; ver; sysinfo; boardinfo get irv; boardinfo get desc; run switch_init; run test-ping; run scx_boot_usb'
 
 setenv loop 0 ; setenv loop_end 10000; setenv inc_loop 'setexpr.l loop ${loop} + 1; echo loop=${loop}'
 setenv usb_read 'fatload usb 0 $loadaddr $fitname; setenv test_status $?'; setenv usb_read2 'usb stop; sleep 3; usb start; fatload usb 0 $loadaddr $fitname; setenv test_status $?'

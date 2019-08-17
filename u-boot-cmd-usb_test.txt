@@ -1,13 +1,26 @@
 
-setenv ipaddr 192.168.168.160; setenv serverip 192.168.168.250
+# setup network test ping 
+setenv test-ping 'ping $serverip'; setenv setup-network 'setenv ipaddr 192.168.168.162; setenv serverip 192.168.168.250; run switch_init; run test-ping'
 
 # for anderson-peak only 
-setenv extra_params 'pci=pcie_bus_safe cpuidle.off=1'; setenv scx_params 'root=LABEL=A rw rootwait' 
-
+setenv extra_params 'pci=pcie_bus_safe cpuidle.off=1'; setenv scx_params 'root=LABEL=A rw rootwait'
 setenv extra_params 'pci=pcie_bus_safe'; setenv scx_params 'root=LABEL=A rw rootwait'
-setenv bootcmd 'echo Hello Castle Peak!; ver; sysinfo; boardinfo get irv; boardinfo get desc; run scx_boot_usb'
+
+# old, use scx_boot_usb
+setenv scx_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb 0 $loadaddr $fitname;if itest $? -eq 0;then bootm $loadaddr;fi'
+#setenv bootcmd 'echo Hello Castle Peak!; ver; sysinfo; boardinfo get irv; boardinfo get desc; run scx_boot_usb'
+
+# new use 'boot_usb' instead of scx_boot_usb
+setenv bootcmd 'echo Hello Castle Peak!; ver; sysinfo; boardinfo get irv; boardinfo get desc; run switch_init; run test-ping; run boot_usb'
+
+
+
 
 setenv loop 0 ; setenv loop_end 10000; setenv inc_loop 'setexpr.l loop ${loop} + 1; echo loop=${loop}'
 setenv usb_read 'fatload usb 0 $loadaddr $fitname; setenv test_status $?'; setenv usb_read2 'usb stop; sleep 3; usb start; fatload usb 0 $loadaddr $fitname; setenv test_status $?'
 setenv usb_read_loop 'setenv loop 0; setenv loop_end 10000; saveenv; echo "usb read loop: from loop=${loop} to ${loop_end}..." ;while itest.l $loop -lt $loop_end ; do ; run usb_read; if itest ${test_status} -ne 0; then setenv loop ${loop_end}; echo "ERROR: Test Failed! status=${test_status}"; fi; run inc_loop ; done'
 setenv usb_read2_loop 'setenv loop 0; setenv loop_end 10000; saveenv; echo "usb read loop: from loop=${loop} to ${loop_end}..." ;while itest.l $loop -lt $loop_end ; do ; run usb_read2; if itest ${test_status} -ne 0; then setenv loop ${loop_end}; echo "ERROR: Test Failed! status=${test_status}"; fi; run inc_loop ; done'
+
+
+
+

@@ -1,0 +1,26 @@
+# mount-ritter
+env default \-f \-a
+saveenv
+
+setenv test-ping \'ping \\$serverip\' 
+setenv init-network \'setenv ipaddr 192.168.168.162; setenv serverip 192.168.168.250; run switch_init; run test-ping\'
+setenv extra_params \'pci=pcie_bus_safe'; setenv scx_params 'root=LABEL=A rw rootwait\'
+setenv scx_boot_usb \'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb 0 \\${loadaddr} \\${fitname};if itest \\${?} -eq 0;then bootm \\${loadaddr};fi\'
+setenv init_test_loop \'setenv test_loop 0 ; setenv test_loop_end 1000000; saveenv; echo test_loop=\\${test_loop}, test_loop_end=\\${test_loop_end}\'
+setenv inc_test_loop \'setexpr.l test_loop \\${test_loop} + 1\'
+setenv inc_test_loop_save \'run inc_test_loop; saveenv\'
+setenv system_info \'ver; sysinfo; boardinfo get irv; boardinfo get desc\'
+setenv test_info \'echo; echo \"### test_loop=\\${test_loop}; test_loop_end=\\${test_loop_end} ###\"; echo; run system_info\'
+setenv test1_scx_boot_usb \'echo \"Hello Test1_SCX_BOOT_USB...\"; run inc_test_loop_save; run test_info; run scx_boot_usb\'
+setenv test2_scx_boot_usb \'echo \"Hello Test2_SCX_BOOT_USB...\"; run inc_test_loop_save; run test_info; run switch_init; run test-ping; run scx_boot_usb\'
+setenv test1_boot_usb \'echo \"TEST1_BOOT_USB...\"; run inc_test_loop_save; run test_info; run boot_usb\'
+setenv test2_boot_usb \'echo \"TEST2_BOOT_USB...\"; run inc_test_loop_save; run test_info; run switch_init; run test-ping; run boot_usb\'
+# === bootcmd 
+#setenv bootcmd \'run test1_scx_boot_usb\'
+#setenv bootcmd \'run test2_scx_boot_usb\'
+#setenv bootcmd \'run test1_boot_usb\'
+setenv bootcmd \'run test2_boot_usb\'
+
+saveenv
+run init_test_loop
+run bootcmd

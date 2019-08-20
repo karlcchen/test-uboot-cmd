@@ -22,9 +22,8 @@ setenv inc_test_loop 'setexpr.l test_loop ${test_loop} + 1'
 setenv inc_test_loop_save 'run inc_test_loop; saveenv'
 
 # === system_info 
-setenv system_info 'ver; sysinfo; boardinfo get irv; boardinfo get desc'
-
 # === test_info 
+setenv system_info 'ver; sysinfo; boardinfo get irv; boardinfo get desc'
 setenv test_info 'echo; echo "### test_loop=${test_loop}; test_loop_end=${test_loop_end} ###"; echo; run system_info'
 
 # === test_scx_boot_usb
@@ -40,6 +39,43 @@ setenv bootcmd 'run test1_scx_boot_usb'
 setenv bootcmd 'run test2_scx_boot_usb'
 setenv bootcmd 'run test1_boot_usb'
 setenv bootcmd 'run test2_boot_usb'
+
+# how to setup a warm reboot test 
+# from console the test machine, ususally in "gnu screen"  
+> run init_test_loop
+> setenv bootcmd 'run test2_boot_usb'
+> saveenv
+> run bootcmd
+# wait until linux booted to shell prompt, with "login" prompt
+# enter "root" as user name
+# from shell prompt: 
+> /diag/startup-test/init-test-autoexec.sh
+# switch to shell "GNU screen" root directory, for example in "/test/castle-peak/usb2" 
+# make sure "GNU screen" log file is turn on, init log file "screenlog.0" to blank 
+> rm  screenlog.0
+# switch back to console of test machine, say "gnu screen/usb2"
+> reboot
+
+# how to check reboot test is ok 
+# we want to check that u-boot "test_loop" counter macthed linux "TEST LOOP" counter
+> cat screenlog.0|tr-ascii | grep "###"
+# we can easily find in log file "screenlog.0" because u-boot/linux loop counters messages has been prefixed with "###"
+> cat screenlog.0|tr-ascii | grep "###"
+### test_loop=1; test_loop_end=1000000 ###
+INFO: ### TEST LOOP: 1 =0x1, System will reboot NOW ###
+### test_loop=2; test_loop_end=1000000 ###
+INFO: ### TEST LOOP: 2 =0x2, System will reboot NOW ###
+### test_loop=3; test_loop_end=1000000 ###
+INFO: ### TEST LOOP: 3 =0x3, System will reboot NOW ###
+### test_loop=4; test_loop_end=1000000 ###
+INFO: ### TEST LOOP: 4 =0x4, System will reboot NOW ###
+### test_loop=5; test_loop_end=1000000 ###
+INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
+### test_loop=6; test_loop_end=1000000 ###
+
+
+
+
 
 # === usb_read, usb_read_loop 
 setenv usb_read 'fatload usb 0 $loadaddr $fitname; setenv test_status $?'; 

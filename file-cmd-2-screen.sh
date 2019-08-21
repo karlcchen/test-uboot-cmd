@@ -28,7 +28,11 @@ do
 #
 # without xargs, cmd file need "\\\$" instead of "\\$", not sure why?  
 #
-    line=`printf "%s\n" ${line_read} | xargs`
+    line=`printf "%s\n" "${line_read}" | xargs`
+#    line=`printf "%s\n" "${line_read}"`
+    if [[ ${line} =~ ^#.* ]] ; then 
+        continue 
+    fi 
     ./send-cmd-2-screen.sh "${line}" "${DEST_SCR_WINDOW}"
     if [ $? -ne 0 ] ; then 
        echo -e "\nERROR: LINE #${LINE_NUM}, send '${line_read}' failed!\n"

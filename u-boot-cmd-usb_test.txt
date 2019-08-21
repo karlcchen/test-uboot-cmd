@@ -6,7 +6,7 @@ env default -f -a
 saveenv  
 
 # === bugfix_params, for Anderson-Peak only, added 'cpuidle.off=1'
-#setenv bugfix_params 'cpuidle.off=1'
+#@if AndersonPeak setenv bugfix_params 'cpuidle.off=1'
 # === extra_params
 setenv extra_params "pci=pcie_bus_safe ${bugfix_params}"
 pri extra_params

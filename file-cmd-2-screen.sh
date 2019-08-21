@@ -22,8 +22,8 @@ if [ ! -f  ${INPUT_CMD_FILE} ] ; then
 fi  
 
 USB_NUM=$((DEST_SCR_WINDOW-1))
-#SRC_LOG_FILE=~/screenlog/scr${DEST_SCR_WINDOW}/src${DEST_SCR_WINDOW}.log
-SRC_LOG_FILE=~/screenlog/usb${USB_NUM}/usb${USB_NUM}.log
+SRC_LOG_FILE=~/screenlog/scr${DEST_SCR_WINDOW}/scr${DEST_SCR_WINDOW}.log
+#SRC_LOG_FILE=~/screenlog/usb${USB_NUM}/usb${USB_NUM}.log
 if [ ! -f ${SRC_LOG_FILE} ] ; then 
    printf "\nERROR: Cannot find file: %s!\n" "${SRC_LOG_FILE}"
    exit 3
@@ -61,18 +61,31 @@ do
         ARG1="`echo "${line}" | awk '{print $1}'`"
 	ARG2="`echo "${line}" | awk '{print $2}'`"
 	ARG3="`echo "${line}" | awk '{print $3}'`"
-	ARG_REMAIN="`echo "${line}" | awk '{print $4 " " $5 " " $6 " " $7 " " $8 " " $9}'`"
-        if [[ ( "${ARG1}" = "#@if" && "${ARG2}" = "${BOARD_NAME}" ) ]] ; then 
-	    if [[ ( "${ARG3}" = "not" || "${ARG3}" = "!" ]] ; then 
-		# printf "%s\n"  "${ARG_REMAIN}"
-                line="`printf "%s\n"  "${ARG_REMAIN}"`"
-	    else 
-		# printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
-                line="`printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"`"
+	ARG4="`echo "${line}" | awk '{print $4}'`"
+	ARG_REMAIN="`echo "${line}" | awk '{print $5 " " $6 " " $7 " " $8 " " $9}'`"
+	b_do_line=0  
+        if [ "${ARG1}" = "#@" ] ; then 
+	    if [ "${ARG2}" = "IF_board_name" ] ; then 
+		if [[ ( "${ARG3}" = "not" || "${ARG3}" = "!" ) ]] ; then 
+		    if [ ! "${ARG4}" = "${BOARD_NAME}" ] ; then 
+			# printf "%s\n"  "${ARG_REMAIN}"
+			line="`printf "%s\n" "${ARG_REMAIN}"`"
+			b_do_line=1
+		    fi
+		elif [ "${ARG3}" = "${BOARD_NAME}" ] ; then 
+		    # printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
+		    line="`printf "%s %s\n" "${ARG4}" "${ARG_REMAIN}"`"
+		    b_do_line=1
+		fi      
+	    elif [ "${ARG2}" = "SHELL_host_cmd" ] ; then 
+		SHELL_CMD="${ARG3} ${ARG4} ${ARG_REMAIN}"
+		printf "\nINFO: #@ SHELL_host_cmd: %s\n" "${SHELL_CMD}"
+		${SHELL_CMD}
 	    fi 
-	else 
-	    continue 
-        fi 
+	fi 
+	if [ ${b_do_line} -eq 0 ] ; then 
+	    continue
+	fi 
     fi 
     ./send-cmd-2-screen.sh "${line}" "${DEST_SCR_WINDOW}"
     if [ $? -ne 0 ] ; then 

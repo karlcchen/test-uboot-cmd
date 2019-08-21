@@ -47,7 +47,7 @@ do
     if [ ! "${line}" = "" ] ; then 
 	if [[ ${line} =~ ^#.* ]] ; then 
 	    ARG1=`echo "${line}" | awk '{print $1}'`
-	    if [ "${ARG1}" = "#@if" ] ; then 
+	    if [ "${ARG1}" = "#@" ] ; then 
 		echo "${line}" | sed 's/\$/\\\\$/g' | sed "0,/'/s/'/\\\'/" | sed 's/\"/\\\"/g' | rev | sed "0,/'/s/'/'\\\/" | rev >>${OUTPUT_CMD_FILE}
 	    fi 
 	    continue 

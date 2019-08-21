@@ -2,9 +2,11 @@
 env default \-f \-a
 saveenv
 
+setenv bugfix_params 'cpuidle.off=1'
+setenv extra_params \"pci=pcie_bus_safe \\${bugfix_params}\"
+pri extra_params 
 setenv test-ping \'ping \\$serverip\' 
 setenv init-network \'setenv ipaddr 192.168.168.162; setenv serverip 192.168.168.250; run switch_init; run test-ping\'
-setenv extra_params \'pci=pcie_bus_safe cpuidle.off=1\'
 setenv scx_params \'root=LABEL=A rw rootwait\'
 setenv scx_boot_usb \'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb 0 \\${loadaddr} \\${fitname};if itest \\${?} -eq 0;then bootm \\${loadaddr};fi\'
 setenv init_test_loop \'setenv test_loop 0; setenv test_loop_end 1000000; saveenv; echo test_loop=\\${test_loop}, test_loop_end=\\${test_loop_end}\'

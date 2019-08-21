@@ -63,11 +63,11 @@ do
 	ARG3="`echo "${line}" | awk '{print $3}'`"
 	ARG_REMAIN="`echo "${line}" | awk '{print $4 " " $5 " " $6 " " $7 " " $8 " " $9}'`"
         if [[ ( "${ARG1}" = "#@if" && "${ARG2}" = "${BOARD_NAME}" ) ]] ; then 
-	    if [ "${ARG3}" = "not" ] ; then 
-		printf "%s\n"  "${ARG_REMAIN}"
+	    if [[ ( "${ARG3}" = "not" || "${ARG3}" = "!" ]] ; then 
+		# printf "%s\n"  "${ARG_REMAIN}"
                 line="`printf "%s\n"  "${ARG_REMAIN}"`"
 	    else 
-		printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
+		# printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
                 line="`printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"`"
 	    fi 
 	else 

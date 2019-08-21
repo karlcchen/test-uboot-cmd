@@ -6,7 +6,7 @@ FILE_REV_MINOR=0
 DEST_SCR_WINDOW=0 
 CMD_DELAY_SEC=2
 LINE_NUM=0
-OUTPUT_CMD_FILE="temp_cvt_cmd_4_screen.txt"
+OUTPUT_CMD_FILE="temp_cvt_cmd_4_screen.cmd"
 
 if [ ! -z "${1}" ] ; then 
     UBOOT_CMD_FILE="${1}"

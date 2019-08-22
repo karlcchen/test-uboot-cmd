@@ -80,14 +80,18 @@ setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run tes
 ### test_loop=6; test_loop_end=1000000 ###
 
 
-# === usb_read, usb_read_loop 
-setenv usb_read 'fatload usb ${usb_dev} ${loadaddr} ${fitname}; setenv test_status $?' 
-setenv usb_read_loop 'setenv test_loop 0; setenv test_loop_end 10000; saveenv; echo "usb read, loop: from test_loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end} ; do ; run usb_read; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv test_loop ${test_loop_end}; fi; run inc_loop ; done'
+# === usb_read, test_usb_read
+setenv usb_test_name "fitname"
+#@ IF_board_name MountRitter setenv usb_test_name '1.h2w'
+#@ IF_board_name MountRitter setenv usb_dev 1
+setenv usb_read 'echo usb_read dev=${usb_dev}...; fatload usb ${usb_dev} ${loadaddr} ${usb_test_name}; setenv test_status $?'
+setenv usb_start_read 'usb stop; sleep 3; usb start; run usb_read'
+setenv test_usb_read       'run init_test_loop; echo "usb read, loop: from test_loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end}; do; echo test_loop=0x${test_loop}; run usb_read      ; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv test_loop ${test_loop_end}; fi; run inc_test_loop; done'
+setenv test_usb_start_read 'run init_test_loop; echo "usb read, loop: from test_loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end}; do; echo test_loop=0x${test_loop}; run usb_start_read; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv test_loop ${test_loop_end}; fi; run inc_test_loop; done'
+
 
 # === usb_start_read
-# === run usb_start_loop
-setenv usb_start_read 'usb stop; sleep 3; usb start; fatload usb ${usb_dev} ${loadaddr} ${fitname}; setenv test_status $?'
-setenv usb_start_read_loop 'run init_test_loop; echo "usb read2 loop: from loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end}; do ; run usb_start_read; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv loop ${loop_end}; fi; run inc_loop ; done'
+# === run test_usb_start_read
 
 # === bootcmd 
 # setenv bootcmd 'run test1_scx_boot_usb'

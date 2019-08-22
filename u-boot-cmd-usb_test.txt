@@ -81,10 +81,11 @@ setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run tes
 
 
 # === usb_read, test_usb_read
-setenv usb_test_name "fitname"
-#@ IF_board_name MountRitter setenv usb_test_name '1.h2w'
-#@ IF_board_name MountRitter setenv usb_dev 1
-setenv usb_read 'echo usb_read dev=${usb_dev}...; fatload usb ${usb_dev} ${loadaddr} ${usb_test_name}; setenv test_status $?'
+setenv usb_test_name "${fitname}"
+setenv usb_test_dev "${usb_dev}"
+# IF_board_name MountRitter setenv usb_test_name '1.h2w'
+# IF_board_name MountRitter setenv usb_test_dev 4
+setenv usb_read 'echo usb_read dev=${usb_test_dev}...; fatload usb ${usb_test_dev} ${loadaddr} ${usb_test_name}; setenv test_status $?'
 setenv usb_start_read 'usb stop; sleep 3; usb start; run usb_read'
 setenv test_usb_read       'run init_test_loop; echo "usb read, loop: from test_loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end}; do; echo test_loop=0x${test_loop}; run usb_read      ; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv test_loop ${test_loop_end}; fi; run inc_test_loop; done'
 setenv test_usb_start_read 'run init_test_loop; echo "usb read, loop: from test_loop=0x${test_loop} to 0x${test_loop_end}..."; while itest.l ${test_loop} -lt ${test_loop_end}; do; echo test_loop=0x${test_loop}; run usb_start_read; if itest ${test_status} -ne 0; then echo "ERROR: Test Failed at test_loop=0x${test_loop}! status=${test_status}"; setenv test_loop ${test_loop_end}; fi; run inc_test_loop; done'

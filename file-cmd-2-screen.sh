@@ -22,8 +22,8 @@ if [ ! -f  ${INPUT_CMD_FILE} ] ; then
 fi  
 
 USB_NUM=$((DEST_SCR_WINDOW-1))
-SRC_LOG_FILE=~/screenlog/scr${DEST_SCR_WINDOW}/scr${DEST_SCR_WINDOW}.log
-#SRC_LOG_FILE=~/screenlog/usb${USB_NUM}/usb${USB_NUM}.log
+SRC_LOG_FILE=~/uc-log/uc${DEST_SCR_WINDOW}/uc${DEST_SCR_WINDOW}.log
+#SRC_LOG_FILE=~/screenlog/scr${DEST_SCR_WINDOW}/scr${DEST_SCR_WINDOW}.log
 if [ ! -f ${SRC_LOG_FILE} ] ; then 
    printf "\nERROR: Cannot find file: %s!\n" "${SRC_LOG_FILE}"
    exit 3

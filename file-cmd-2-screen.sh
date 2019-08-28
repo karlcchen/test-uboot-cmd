@@ -2,7 +2,7 @@
 #
 
 DEST_SCR_WINDOW1="" 
-CMD_DELAY_SEC=2
+CMD_DELAY_SEC=1
 LINE_NUM=0
 
 if [ -z "${1}" ] ; then 

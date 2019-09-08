@@ -1,9 +1,11 @@
 #!/bin/bash
 #
 
-DEST_SCR_WINDOW1="" 
 CMD_DELAY_SEC=1
 LINE_NUM=0
+
+# for debug 
+# echo -e "\n DEBUG: ARG_LIST=${1} ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}\n" 
 
 if [ -z "${1}" ] ; then 
     echo -e "\nERROR: please specify input filename\n" 
@@ -12,15 +14,14 @@ fi
 
 if [ -z "${2}" ] ; then 
     printf "\nERROR: need screen's destination windows input as 2nd argument!\n"
-else
-    DEST_SCR_WINDOW1="${2}"         
+    exit 2    
 fi 
 
 INPUT_CMD_FILE="${1}"
  
 if [ ! -f  ${INPUT_CMD_FILE} ] ; then 
     echo -e "\nERROR: cannot find input file: ${INPUT_CMD_FILE}\n" 
-    exit 2
+    exit 3
 fi  
 
 BOARD_NAME_ARRAY[0]=""
@@ -51,13 +52,13 @@ do
     SRC_LOG_FILE=~/uc-log/uc${CUR_WIN}/uc${CUR_WIN}.log
     if [ ! -f ${SRC_LOG_FILE} ] ; then 
         printf "\nERROR: Cannot find file: %s!\n" "${SRC_LOG_FILE}"
-        exit 3
+        exit 4
     fi 
 
     rm -f ${SRC_LOG_FILE}
     if [ $? -ne 0 ] ; then 
        echo -e "\nERROR: 'rm -f ${SRC_LOG_FILE}' failed!\n"
-       exit 3
+       exit 5
     fi 
     SRC_LOG_FILE_ARRAY[ ${WIN_INDEX} ]="${SRC_LOG_FILE}"
     WIN_INDEX=$((WIN_INDEX+1))
@@ -67,7 +68,7 @@ sleep 1
 ./send-cmd-2-screen.sh "\n" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9} 
 if [ $? -ne 0 ] ; then 
    echo -e "\nERROR: send check to all screen windows failed!\n"
-   exit 4
+   exit 6
 fi 
 sleep 2
 
@@ -95,6 +96,7 @@ LINE_NUM=0
 while IFS= read -r line_read
 do
     LINE_NUM=$((LINE_NUM+1))
+#    printf "DEBUG: LINE_NUM=%d\n" ${LINE_NUM}
 #
 # without xargs, cmd file need "\\\$" instead of "\\$", not sure why?  
 #
@@ -131,6 +133,10 @@ do
    		    fi 
                     if [ ${b_do_line} -eq 1 ] ; then 
                         ./send-cmd-2-screen.sh "${line}" ${CUR_WIN}
+                        if [ $? -ne 0 ] ; then 
+                            echo -e "\nERROR: LINE #${LINE_NUM}, send '${line}' failed!\n"
+                            exit 7
+                        fi 
         	    fi 
                     WIN_INDEX=$((WIN_INDEX+1))
                 done
@@ -139,7 +145,7 @@ do
             ./send-cmd-2-screen.sh "${line}" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
             if [ $? -ne 0 ] ; then 
                 echo -e "\nERROR: LINE #${LINE_NUM}, send '${line_read}' failed!\n"
-                exit 6
+                exit 7
             fi 
 	fi 
         sleep ${CMD_DELAY_SEC}

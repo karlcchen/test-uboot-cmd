@@ -1,4 +1,5 @@
-#
+#@! 2 0 u-boot-cmd-usb_test.txt
+# 
 # test re-booting u-boot/linux, boot from 'usb drive'
 #
 # Note:use "$?", "${?}" is not the same as "$?", which is ususally undefined and return null   

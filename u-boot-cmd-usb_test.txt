@@ -9,7 +9,7 @@ saveenv
 #@ SHELL_host_cmd sleep 2
 
 # --- bugfix_params, for Anderson-Peak only, added 'cpuidle.off=1'
-#@ IF_board_name AndersonPeak setenv bugfix_params 'cpuidle.off=1'
+##@ IF_board_name AndersonPeak setenv bugfix_params 'cpuidle.off=1'
 
 setenv usb_boot_dev 0
 # IF_board_name CastlePeak setenv usb_boot_dev 2

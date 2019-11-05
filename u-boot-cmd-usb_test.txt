@@ -110,8 +110,8 @@ setenv bootcmd 'run test2_scx_boot_usb'
 # setenv bootcmd 'run test1_boot_usb'
 # setenv bootcmd 'run test2_boot_usb'
 
-run init_network
-#@ SHELL_host_cmd sleep 10
-run init_test_loop 
+# run init_network
+##@ SHELL_host_cmd sleep 10
+# run init_test_loop 
 saveenv
 

@@ -2,12 +2,12 @@
 #
 #
 
-SW_NUM=1
-POWER_SW=1
+SCR_NUM=1
+POWER_NUM=1
 
 SCR_LOG_PATH="/home/kchen/uc-log/"
-SCR_LOG_FILE="${SCR_LOG_PATH}/uc${SW_NUM}/uc${SW_NUM}.log"
-TEST_LOG_FILE="${SCR_LOG_PATH}/uc${SW_NUM}/power-cycle-boot-failure-uc${SW_NUM}.log"
+SCR_LOG_FILE="${SCR_LOG_PATH}/uc${SCR_NUM}/uc${SCR_NUM}.log"
+TEST_LOG_FILE="${SCR_LOG_PATH}/uc${SCR_NUM}/power-cycle-boot-failure-uc${SCR_NUM}.log"
 COUNT=0
 OFF_TIME=4
 ON_TIME=16
@@ -22,14 +22,14 @@ do
         printf "ERROR: rm %s failed at loop=%d\n" "${SCR_LOG_FILE}" ${COUNT}
         exit 1
     fi 
-    lpower off ${POWER_SW} >/dev/null
+    lpower off ${POWER_NUM} >/dev/null
     if [ $? -ne 0 ] ; then 
         printf "ERROR: lpower off failed at loop=%d\n" ${COUNT}
         exit 2
     fi 
 
     sleep ${OFF_TIME}  
-    lpower on ${POWER_SW} >/dev/null
+    lpower on ${POWER_NUM} >/dev/null
     if [ $? -ne 0 ] ; then 
         printf "ERROR: lpower on failed at loop=%d\n" ${COUNT}
         exit 3

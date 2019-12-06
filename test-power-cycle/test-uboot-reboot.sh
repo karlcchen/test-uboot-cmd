@@ -2,8 +2,16 @@
 #
 #
 
-SCR_NUM=1
-POWER_NUM=1
+if [ "$1" = "" ] ; then 
+    printf "ERROR: first argument, screen number, not specified\n" 
+    exit 1
+fi 
+SCR_NUM=$1
+POWER_NUM=$1
+
+if [ ! "$2" = "" ] ; then 
+    POWER_NUM=$2
+fi 
 
 SCR_LOG_PATH="/home/kchen/uc-log/"
 SCR_LOG_FILE="${SCR_LOG_PATH}/uc${SCR_NUM}/uc${SCR_NUM}.log"

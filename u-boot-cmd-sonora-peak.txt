@@ -25,7 +25,7 @@ setenv scx_params 'root=LABEL=A rw rootwait'
 # --- init network 
 # --- test ping 
 setenv test-ping 'ping ${serverip}'
-setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run switch_init; run test-ping'
+setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run test-ping'
 #@ IF_board_name AndersonPeak    setenv ipaddr 192.168.168.167
 #@ IF_board_name CastlePeak      setenv ipaddr 192.168.168.166
 #@ IF_board_name MountRitter     setenv ipaddr 192.168.168.165
@@ -36,7 +36,7 @@ setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.
 #@ IF_board_name LomaPrieta      setenv ipaddr 192.168.168.160
 
 # --- scx_boot_usb
-setenv scx_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
+setenv scx_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
 
 # --- inc_test_loop, note SETEXPR treat number as HexaDecimal 
 # --- inc_test_loop
@@ -52,11 +52,11 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 
 # --- test_scx_boot_usb
 setenv test1_scx_boot_usb 'echo "Hello Test1_SCX_BOOT_USB..."; run inc_test_loop_save; run test_info; run scx_boot_usb'
-setenv test2_scx_boot_usb 'echo "Hello Test2_SCX_BOOT_USB..."; run inc_test_loop_save; run test_info; run switch_init; run test-ping; run scx_boot_usb'
+setenv test2_scx_boot_usb 'echo "Hello Test2_SCX_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run scx_boot_usb'
 
 # --- test_boot_usb
 setenv test1_boot_usb 'echo "TEST1_BOOT_USB..."; run inc_test_loop_save; run test_info; run boot_usb'
-setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run test_info; run switch_init; run test-ping; run boot_usb'
+setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run boot_usb'
 
 # how to setup a warm reboot test 
 # from console the test machine, ususally in "gnu screen"  

@@ -1,0 +1,103 @@
+#@! 2 0 u-boot-cmd-usb_test.txt
+# 
+# test re-booting u-boot/linux, boot from 'usb drive'
+#
+# Note:use "$?", "${?}" is not the same as "$?", which is ususally undefined and return null   
+#
+env default -f -a
+# saveenv  
+#@ SHELL_host_cmd sleep 2
+
+# --- bugfix_params, for Anderson-Peak only, added 'cpuidle.off=1'
+##@ IF_board_name AndersonPeak setenv bugfix_params 'cpuidle.off=1'
+# --- bugfix_params, for Castle-Peak only, added 'cpuidle.off=1'
+#@ IF_board_name CastlePeak setenv bugfix_params 'cpuidle.off=1'
+
+setenv usb_boot_dev 0
+# IF_board_name CastlePeak setenv usb_boot_dev 2
+
+# --- extra_params
+setenv extra_params "pci=pcie_bus_safe ${bugfix_params}"
+pri extra_params
+# --- scx_params
+# setenv scx_params 'root=LABEL=A rw rootwait'
+
+# --- init network 
+# --- test ping 
+setenv test-ping 'ping ${serverip}'
+setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run test-ping'
+#@ IF_board_name SonoraPeak      setenv ipaddr 192.168.168.168
+#@ IF_board_name AndersonPeak    setenv ipaddr 192.168.168.167
+#@ IF_board_name CastlePeak      setenv ipaddr 192.168.168.166
+#@ IF_board_name MountRitter     setenv ipaddr 192.168.168.165
+#@ IF_board_name BirchMountain   setenv ipaddr 192.168.168.164
+#@ IF_board_name BearMountain    setenv ipaddr 192.168.168.163
+#@ IF_board_name PalomaMountain  setenv ipaddr 192.168.168.162
+#@ IF_board_name MammothMountain setenv ipaddr 192.168.168.161
+#@ IF_board_name LomaPrieta      setenv ipaddr 192.168.168.160
+setenv serverip 192.168.168.250
+
+# --- scx_boot_usb
+setenv scx_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
+
+# --- inc_test_loop, note SETEXPR treat number as HexaDecimal 
+# --- inc_test_loop
+# --- inc_test_loop_save
+# setenv init_test_loop 'setenv test_loop 0 ; setenv test_loop_end 9999999; saveenv; echo test_loop= ${test_loop}, test_loop_end= ${test_loop_end}'
+# setenv inc_test_loop 'setexpr.l test_loop ${test_loop} + 1'
+# setenv inc_test_loop_save 'run inc_test_loop; saveenv'
+
+# --- system_info 
+# --- test_info 
+setenv system_info 'ver; sysinfo; boardinfo get irv; boardinfo get desc'
+setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${test_loop_end} ###"; echo usb_read_dev= ${usb_read_dev}; echo usb_test_filename= ${usb_read_file}; echo; run system_info'
+
+# --- test_scx_boot_usb
+# setenv test1_scx_boot_usb 'echo "Hello Test1_SCX_BOOT_USB..."; run inc_test_loop_save; run test_info; run scx_boot_usb'
+# setenv test2_scx_boot_usb 'echo "Hello Test2_SCX_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run scx_boot_usb'
+
+# --- test_boot_usb
+# setenv test1_boot_usb 'echo "TEST1_BOOT_USB..."; run inc_test_loop_save; run test_info; run boot_usb'
+# setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run boot_usb'
+
+# how to setup a warm reboot test 
+# from console the test machine, ususally in "gnu screen"  
+# > run init_test_loop
+# > setenv bootcmd 'run test2_boot_usb'
+# > saveenv
+# > run bootcmd
+# wait until linux booted to shell prompt, with "login" prompt
+# enter "root" as user name
+# from shell prompt: 
+# > /diag/startup-test/init-test-autoexec.sh
+# switch to shell "GNU screen" root directory, for example in "/test/castle-peak/usb2" 
+# make sure "GNU screen" log file is turn on, init log file "screenlog.0" to blank 
+# > rm  screenlog.0
+# switch back to console of test machine, say "gnu screen/usb2"
+# > reboot
+
+# how to check reboot test is ok 
+# we want to check that u-boot "test_loop" counter macthed linux "TEST LOOP" counter
+#> cat screenlog.0|tr-ascii | grep "###"
+# we can easily find in log file "screenlog.0" because u-boot/linux loop counters messages has been prefixed with "###"
+#> cat screenlog.0|tr-ascii | grep "###"
+### test_loop= 1; test_loop_end= 1000000 ###
+# INFO: ### TEST LOOP: 1 =0x1, System will reboot NOW ###
+# test_loop=2; test_loop_end=1000000 ###
+# INFO: ### TEST LOOP: 2 =0x2, System will reboot NOW ###
+### test_loop=3; test_loop_end=1000000 ###
+# INFO: ### TEST LOOP: 3 =0x3, System will reboot NOW ###
+### test_loop=4; test_loop_end=1000000 ###
+#INFO: ### TEST LOOP: 4 =0x4, System will reboot NOW ###
+### test_loop=5; test_loop_end=1000000 ###
+# INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
+### test_loop=6; test_loop_end=1000000 ###
+
+setenv scx_params 'root=/dev/sdb1 rw'
+# setenv scx_params 'root=/dev/sdb3 rw'
+# setenv scx_params 'root=/dev/ram0 rw'
+# setenv scx_params 'initrd=${ramdisk_addr_r} rw'
+
+# setenv fitname 'boot-a.fit'
+setenv fitname 'kchen/boot-a.fit'
+# run scx_boot_net

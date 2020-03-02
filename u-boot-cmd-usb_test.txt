@@ -24,9 +24,7 @@ setenv scx_params 'root=LABEL=A rw rootwait'
 
 # --- init network 
 # --- test ping 
-setenv test-ping 'ping ${serverip}'
-setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run switch_init; run test-ping'
-#@ IF_board_name SonoraPeak      setenv ipaddr 192.168.168.167
+#@ IF_board_name SonoraPeak      setenv ipaddr 192.168.168.168
 #@ IF_board_name AndersonPeak    setenv ipaddr 192.168.168.167
 #@ IF_board_name CastlePeak      setenv ipaddr 192.168.168.166
 #@ IF_board_name MountRitter     setenv ipaddr 192.168.168.165
@@ -36,6 +34,8 @@ setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.
 #@ IF_board_name MammothMountain setenv ipaddr 192.168.168.161
 #@ IF_board_name LomaPrieta      setenv ipaddr 192.168.168.160
 setenv serverip 192.168.168.250
+setenv test-ping 'ping ${serverip}'
+setenv init_network 'setenv ipaddr ${ipaddr} setenv serverip ${serverip}; run switch_init; run test-ping'
 
 # --- scx_boot_usb
 setenv scx_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
@@ -118,4 +118,3 @@ setenv bootcmd 'run test2_scx_boot_usb'
 ##@ SHELL_host_cmd sleep 10
 # run init_test_loop 
 saveenv
-

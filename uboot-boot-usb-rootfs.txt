@@ -21,12 +21,10 @@ setenv extra_params "pci=pcie_bus_safe ${bugfix_params}"
 pri extra_params
 # --- scx_params
 # setenv scx_params 'root=LABEL=A rw rootwait'
-setenv scx_params 'root=/dev/sdb1 rw'
 
 # --- init network 
 # --- test ping 
 setenv test-ping 'ping ${serverip}'
-setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run test-ping'
 #@ IF_board_name SonoraPeak      setenv ipaddr 192.168.168.168
 #@ IF_board_name AndersonPeak    setenv ipaddr 192.168.168.167
 #@ IF_board_name CastlePeak      setenv ipaddr 192.168.168.166
@@ -37,6 +35,7 @@ setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.
 #@ IF_board_name MammothMountain setenv ipaddr 192.168.168.161
 #@ IF_board_name LomaPrieta      setenv ipaddr 192.168.168.160
 setenv serverip 192.168.168.250
+setenv init_network 'setenv ipaddr ${ipaddr}; setenv serverip ${serverip}; run test-ping'
 
 # --- scx_boot_usb
 setenv scx_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
@@ -119,6 +118,9 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 #@ SHELL_host_cmd sleep 10
 # run init_test_loop 
 # saveenv
+
+setenv scx_params 'root=/dev/sdb1 rw'
+setenv fitname 'kchen/boot-a.fit'
 
 run switch_init
 #@ SHELL_host_cmd sleep 5

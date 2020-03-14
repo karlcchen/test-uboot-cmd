@@ -99,5 +99,7 @@ setenv scx_params 'root=/dev/sdb1 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
 
 # setenv fitname 'boot-a.fit'
-setenv fitname 'kchen/boot-a.fit'
+setenv fitname 'kchen/scx-tz370-boot-a.fit'
 # run scx_boot_net
+
+echo === uboot env setup completed ===

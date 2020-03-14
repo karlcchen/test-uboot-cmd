@@ -20,7 +20,12 @@ setenv usb_boot_dev 0
 setenv extra_params "pci=pcie_bus_safe ${bugfix_params}"
 pri extra_params
 # --- scx_params
-setenv scx_params 'root=LABEL=A rw rootwait'
+# setenv scx_params 'root=LABEL=A rw rootwait'
+#
+# instead of old root=LABEL, use device name, to avoid accidentally booting from other devices obersved on TZ370...
+# rootfs at partition #3 if usb was prepared from wic images
+# rootfs at partition #1 if usb was prepared from cpio.gz images
+setenv scx_params 'root=/dev/sdb3 rw rootwait'
 
 # --- init network 
 # --- test ping 
@@ -39,6 +44,7 @@ setenv init_network 'setenv ipaddr ${ipaddr} setenv serverip ${serverip}; run sw
 
 # --- scx_boot_usb
 setenv scx_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
+setenv ext4_boot_usb 'usb stop;sleep 3;usb start;run switch_init;run scx_boot_params;ext4load usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
 
 # --- inc_test_loop, note SETEXPR treat number as HexaDecimal 
 # --- inc_test_loop
@@ -118,3 +124,5 @@ setenv bootcmd 'run test2_scx_boot_usb'
 ##@ SHELL_host_cmd sleep 10
 # run init_test_loop 
 saveenv
+
+echo === uboot env setup completed ===

@@ -113,33 +113,35 @@ do
                 WIN_INDEX=0
                 for CUR_WIN in ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
                 do
-         	b_do_line=0  
-   		if [ "${ARG2}" = "IF_board_name" ] ; then 
-   		    if [[ ( "${ARG3}" = "not" || "${ARG3}" = "!" ) ]] ; then 
-   			if [ ! "${ARG4}" = "${BOARD_NAME_ARRAY[ ${WIN_INDEX} ]}" ] ; then 
-   			    # printf "%s\n"  "${ARG_REMAIN}"
-   			    line="`printf "%s\n" "${ARG_REMAIN}"`"
-   			    b_do_line=1
-   			fi
-   		    elif [ "${ARG3}" = "${BOARD_NAME_ARRAY[ ${WIN_INDEX} ]}" ] ; then 
-   			# printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
-   			line="`printf "%s %s\n" "${ARG4}" "${ARG_REMAIN}"`"
-   			b_do_line=1
-   		    fi      
+		    b_do_line=0  
+		    if [ "${ARG2}" = "IF_board_name" ] ; then 
+			if [[ ( "${ARG3}" = "not" || "${ARG3}" = "!" ) ]] ; then 
+			    if [ ! "${ARG4}" = "${BOARD_NAME_ARRAY[ ${WIN_INDEX} ]}" ] ; then 
+				# printf "%s\n"  "${ARG_REMAIN}"
+				line="`printf "%s\n" "${ARG_REMAIN}"`"
+				b_do_line=1
+			    fi
+			elif [ "${ARG3}" = "${BOARD_NAME_ARRAY[ ${WIN_INDEX} ]}" ] ; then 
+			    # printf "%s %s\n" "${ARG3}" "${ARG_REMAIN}"
+			    line="`printf "%s %s\n" "${ARG4}" "${ARG_REMAIN}"`"
+			    b_do_line=1
+			fi      
+#
                     elif [ "${ARG2}" = "SHELL_host_cmd" ] ; then 
-   		        SHELL_CMD="${ARG3} ${ARG4} ${ARG_REMAIN}"
-   		        printf "\nINFO: #@ SHELL_host_cmd: %s\n" "${SHELL_CMD}"
-   		        ${SHELL_CMD}
-   		    fi 
-                    if [ ${b_do_line} -eq 1 ] ; then 
-                        ./send-cmd-2-screen.sh "${line}" ${CUR_WIN}
-                        if [ $? -ne 0 ] ; then 
-                            echo -e "\nERROR: LINE #${LINE_NUM}, send '${line}' failed!\n"
-                            exit 7
-                        fi 
-        	    fi 
-                    WIN_INDEX=$((WIN_INDEX+1))
-                done
+       		        SHELL_CMD="${ARG3} ${ARG4} ${ARG_REMAIN}"
+       		        printf "\nINFO: #@ SHELL_host_cmd: %s\n" "${SHELL_CMD}"
+       		        ${SHELL_CMD}
+		    fi 
+#
+        	    if [ ${b_do_line} -eq 1 ] ; then 
+			./send-cmd-2-screen.sh "${line}" ${CUR_WIN}
+			if [ $? -ne 0 ] ; then 
+			    echo -e "\nERROR: LINE #${LINE_NUM}, send '${line}' failed!\n"
+			    exit 7
+			fi 
+		    fi 
+		    WIN_INDEX=$((WIN_INDEX+1))
+		done
 	    fi 
         else 
             ./send-cmd-2-screen.sh "${line}" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}

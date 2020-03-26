@@ -94,13 +94,13 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 # INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
 ### test_loop=6; test_loop_end=1000000 ###
 
-setenv scx_params 'root=/dev/sda2 rw'
+setenv scx_params 'root=/dev/sdb1 rw'
 # setenv scx_params 'root=/dev/sdb3 rw'
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
 
 # setenv fitname 'boot-a.fit'
 # setenv fitname 'diag-boot.fit'
-setenv fitname 'scx-mount-ritter.fit'
+setenv fitname 'diag-boot.fit'
 
 echo; echo === uboot env setup completed ===; echo

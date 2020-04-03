@@ -114,3 +114,15 @@ setenv scx_boot_params 'run set_net_params; setenv bootargs $console $extra_para
 
 @echo; echo "=== uboot env setup completed ==="; echo
 @echo; echo "### do saveenv if not promjet ###"; echo
+=======
+setenv scx_params 'root=/dev/sdb1 rw'
+# setenv scx_params 'root=/dev/sdb3 rw'
+# setenv scx_params 'root=/dev/ram0 rw'
+# setenv scx_params 'initrd=${ramdisk_addr_r} rw'
+
+# setenv fitname 'boot-a.fit'
+# setenv fitname 'diag-boot.fit'
+setenv fitname 'diag-boot.fit'
+
+echo; echo === uboot env setup completed ===; echo
+

@@ -26,16 +26,28 @@ pri extra_params
 # --- test ping 
 setenv test-ping 'ping ${serverip}'
 setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run test-ping'
-#@ IF_board_name SonoraPeak      setenv ipaddr 192.168.168.168
-#@ IF_board_name AndersonPeak    setenv ipaddr 192.168.168.167
-#@ IF_board_name CastlePeak      setenv ipaddr 192.168.168.166
-#@ IF_board_name MountRitter     setenv ipaddr 192.168.168.165
+#@ IF_board_name SonoraPeak      setenv ipaddr 192.168.1.201
+#@ IF_board_name AndersonPeak    setenv ipaddr 192.168.1.204
+#@ IF_board_name CastlePeak      setenv ipaddr 192.168.1.203
+#@ IF_board_name MountRitter     setenv ipaddr 192.168.1.202
 #@ IF_board_name BirchMountain   setenv ipaddr 192.168.168.164
 #@ IF_board_name BearMountain    setenv ipaddr 192.168.168.163
 #@ IF_board_name PalomaMountain  setenv ipaddr 192.168.168.162
 #@ IF_board_name MammothMountain setenv ipaddr 192.168.168.161
 #@ IF_board_name LomaPrieta      setenv ipaddr 192.168.168.160
-setenv serverip 192.168.168.250
+setenv serverip 192.168.1.250
+
+#@ IF_board_name SonoraPeak      setenv switch_init 'echo "no switch_init"' 
+
+#@ IF_board_name SonoraPeak      setenv fitname 'diag-sonora-peak.fit'
+#@ IF_board_name AndersonPeak    setenv fitname 'diag-anderson-peak.fit'
+#@ IF_board_name CastlePeak      setenv fitname 'diag-castle-peak.fit'
+#@ IF_board_name MountRitter     setenv fitname 'diag-mount-ritter.fit'
+#@ IF_board_name BirchMountain   setenv fitname 'diag-nirch-mountain.fit'
+#@ IF_board_name BearMountain    setenv fitname 'diag-bear-mountain.fit'
+#@ IF_board_name PalomaMountain  setenv fitname 'diag-paloma-mountain.fit'
+#@ IF_board_name MammothMountain setenv fitname 'diag-mammoth-mountain.fit'
+#@ IF_board_name LomaPrieta      setenv fitname 'diag-loma-prieta.fit'
 
 # --- scx_boot_usb
 setenv scx_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
@@ -94,13 +106,11 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 # INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
 ### test_loop=6; test_loop_end=1000000 ###
 
-setenv scx_params 'root=/dev/sda2 rw'
-# setenv scx_params 'root=/dev/sdb3 rw'
+setenv scx_params 'root=/dev/sda1 rw rootwait'
+setenv set_net_params 'setenv bootinfo_netparams ip=$ipaddr:$serverip:$gatwayip:$netmask:marvell:eth1: nfsroot=$serverip:/srv/nfs/,tcp,v3'
+setenv scx_boot_params 'run set_net_params; setenv bootargs $console $extra_params $scx_params $bootinfo_netparams $cpuidle'
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
 
-# setenv fitname 'boot-a.fit'
-# setenv fitname 'diag-boot.fit'
-setenv fitname 'scx-mount-ritter.fit'
-
-echo; echo === uboot env setup completed ===; echo
+@echo; echo "=== uboot env setup completed ==="; echo
+@echo; echo "### do saveenv if not promjet ###"; echo

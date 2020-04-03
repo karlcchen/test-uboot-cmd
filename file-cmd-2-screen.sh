@@ -144,7 +144,12 @@ do
 		done
 	    fi 
         else 
-            ./send-cmd-2-screen.sh "${line}" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+            if [[ ${line} =~ ^@.* ]] ; then 
+                new_line="`echo ${line} | cut -c2-`"
+                ./send-cmd-2-screen.sh --silent "${new_line}" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+            else 
+                ./send-cmd-2-screen.sh "${line}" ${2} ${3} ${4} ${5} ${6} ${7} ${8} ${9}
+            fi
             if [ $? -ne 0 ] ; then 
                 echo -e "\nERROR: LINE #${LINE_NUM}, send '${line_read}' failed!\n"
                 exit 7

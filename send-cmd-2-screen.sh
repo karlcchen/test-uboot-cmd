@@ -1,8 +1,15 @@
 #!/bin/bash
 #
 
+b_SILENT=0
+if [ "$1" = "--silent" ] ; then 
+# currently don't know how to make screen exec command with silence :-)
+    b_SILENT=1
+    shift 1
+fi 
+
 if [ -z "${1}" ] ; then 
-    printf "\nERROR: no input found!\n"
+    printf "\nERROR1: no input found!\n"
     exit 1
 fi 
 
@@ -15,7 +22,7 @@ if [ -z "${2}" ] ; then
 # but not normal shell var string, "${CMD_STR}\n" does not work !
     sudo screen -S usb-console -X stuff "${CMD_STR}\n"
     if [ $? -ne 0 ] ; then 
-        printf "ERROR: send cmd=\"%s\" to active screen window failed!\n" "${CMD_STR}"
+        printf "ERROR2: send cmd=\"%s\" to active screen window failed!\n" "${CMD_STR}"
         exit 2
     fi
 else 
@@ -29,7 +36,7 @@ else
         printf "c=%d,w=%d, %s\n" "${N_CMD}" "${OUT_WINDOW}" "${CMD_STR}"
 	sudo screen -S usb-console -p "${OUT_WINDOW}" -X stuff "${CMD_STR}\n"
 	if [ $? -ne 0 ] ; then 
-	    printf "ERROR: send cmd=\"%s\" to screen window: \"%s\" failed!\n" "${CMD_STR}" "${OUT_WINDOW}" 
+	    printf "ERROR3: send cmd=\"%s\" to screen window: \"%s\" failed!\n" "${CMD_STR}" "${OUT_WINDOW}" 
 	    exit 3
 	fi
 	shift 1

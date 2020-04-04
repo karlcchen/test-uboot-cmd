@@ -3,7 +3,10 @@
 
 b_SILENT=0
 if [ "$1" = "--silent" ] ; then 
-# currently don't know how to make screen exec command with silence :-)
+#
+# uselss for now
+# cannot make "gnu screen" receive commands with silent execution :-)
+#
     b_SILENT=1
     shift 1
 fi 

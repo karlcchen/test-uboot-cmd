@@ -66,13 +66,13 @@ for CUR_WIN in ${SCR_WIN_LIST}
 do
     SRC_LOG_FILE=~/uc-log/uc${CUR_WIN}/uc${CUR_WIN}.log
     if [ ! -f ${SRC_LOG_FILE} ] ; then 
-        printf "\nERROR: Cannot find file: %s!\n" "${SRC_LOG_FILE}"
+        printf "\nERROR4: Cannot find file: %s!\n" "${SRC_LOG_FILE}"
         exit 4
     fi 
 
     rm -f ${SRC_LOG_FILE}
     if [ $? -ne 0 ] ; then 
-       echo -e "\nERROR: 'rm -f ${SRC_LOG_FILE}' failed!\n"
+       echo -e "\nERROR5: 'rm -f ${SRC_LOG_FILE}' failed!\n"
        exit 5
     fi 
     SRC_LOG_FILE_ARRAY[ ${WIN_INDEX} ]="${SRC_LOG_FILE}"
@@ -82,7 +82,7 @@ done
 sleep 1
 ./send-cmd-2-screen.sh "\n" ${SCR_WIN_LIST}
 if [ $? -ne 0 ] ; then 
-   echo -e "\nERROR: send check to all screen windows failed!\n"
+   echo -e "\nERROR6: send check to all screen windows failed!\n"
    exit 6
 fi 
 sleep 2
@@ -168,7 +168,7 @@ do
                 ./send-cmd-2-screen.sh "${line}" ${SCR_WIN_LIST}
             fi
             if [ $? -ne 0 ] ; then 
-                echo -e "\nERROR: LINE #${LINE_NUM}, send '${line_read}' failed!\n"
+                echo -e "\nERROR7: LINE #${LINE_NUM}, send '${line_read}' failed!\n"
                 exit 7
             fi 
 	fi 

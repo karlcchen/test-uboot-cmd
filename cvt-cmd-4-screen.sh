@@ -29,7 +29,7 @@ fi
 if [ ! -z "${1}" ] ; then 
     UBOOT_CMD_FILE="${1}"
 else
-    printf "\nERROR: No input file specified!\n" 
+    printf "\nERROR1: No input file specified!\n" 
     exit 1
 fi 
 
@@ -42,7 +42,7 @@ if [ -f "${OUTPUT_CMD_FILE}" ] ; then
         read -p "WARNING: output file '${OUTPUT_CMD_FILE}' exists, overwrite? (Yes/No):" -n 1 -r
         echo  # (optional) move to a new line
         if [[ ! $REPLY =~ ^[Yy]$ ]] ; then
-            printf "\n ERROR: Operation aborted by user!\n"
+            printf "\n ERROR2: Operation aborted by user!\n"
 	    exit 2
         fi
     else
@@ -50,7 +50,7 @@ if [ -f "${OUTPUT_CMD_FILE}" ] ; then
     fi
     rm -f ${OUTPUT_CMD_FILE}
     if [ $? -ne 0 ] ; then 
-        printf "\nERROR: remove file %s failed!\n" "${OUTPUT_CMD_FILE}"
+        printf "\nERROR3: remove file %s failed!\n" "${OUTPUT_CMD_FILE}"
         exit 3
     fi 
 fi 
@@ -67,9 +67,9 @@ do
     if [ ${LINE_NUM} -eq 1 ] ; then 
         ARG1=`echo "${line}" | awk '{print $1}'`
         if [ ! "${ARG1}" = "${ID_UBOOT_ENV_SRC}" ] ; then 
-            printf "\nERROR: uboot env file ID mismatched: \"%s\" != \"%s\"\n" "${ARG1}" "${ID_UBOOT_ENV_SRC}"  
+            printf "\nERROR4: uboot env file ID mismatched: \"%s\" != \"%s\"\n" "${ARG1}" "${ID_UBOOT_ENV_SRC}"  
             printf " DEBUG: line #%d= \"%s\"\n" ${LINE_NUM} "${line}" 
-            exit 1
+            exit 4
         fi  
         continue 
     fi  
@@ -94,8 +94,8 @@ do
 #        echo ${line} | sed 's/\$/\\\\$/g' | sed "0,/'/s/'/\\\'/" | sed '0,/\"/s/\"/\\\"/' | rev | sed "0,/'/s/'/'\\\/" | sed '0,/\"/s/\"/\"\\/' | rev >>${OUTPUT_CMD_FILE}
 #        echo ${line} | sed 's/\$/\\\\$/g' | sed "0,/'/s/'/\\\'/" | rev | sed "0,/'/s/'/'\\\/" | rev >>${OUTPUT_CMD_FILE}
 	if [ $? -ne 0 ] ; then 
-	    echo -e "\nERROR: LINE #${LINE_NUM}, process '${line}' failed!\n"
-	    exit 4
+	    echo -e "\nERROR5: LINE #${LINE_NUM}, process '${line}' failed!\n"
+	    exit 5
 	fi 
     fi 
 done < "${UBOOT_CMD_FILE}"

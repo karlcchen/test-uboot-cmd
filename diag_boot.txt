@@ -1,6 +1,6 @@
 #@! 2 0 u-boot-cmd-usb_test.txt
 # 
-# test re-booting u-boot/linux, boot from 'usb drive'
+# diag_boot.txt
 #
 # Note:use "$?", "${?}" is not the same as "$?", which is ususally undefined and return null   
 #
@@ -13,7 +13,7 @@ env default -f -a
 # --- bugfix_params, for Castle-Peak only, added 'cpuidle.off=1'
 #@ IF_board_name CastlePeak setenv bugfix_params 'cpuidle.off=1'
 
-setenv usb_boot_dev 0
+setenv usb_boot_dev 0:2
 # IF_board_name CastlePeak setenv usb_boot_dev 2
 
 # --- extra_params
@@ -35,13 +35,10 @@ pri extra_params
 #@ IF_board_name LomaPrieta      setenv machine_name loma-prieta;      setenv ipaddr 192.168.168.160  
 setenv test-ping 'ping ${serverip}'
 setenv init_network 'setenv ipaddr 192.168.168.168; setenv serverip 192.168.168.250; run test-ping'
-setenv serverip 192.168.1.250
+setenv serverip 192.168.168.250
 
 #@ IF_board_name SonoraPeak      setenv switch_init 'echo "no switch_init"' 
 
-# --- scx_boot_usb
-setenv scx_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
-setenv ext4_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;ext4load usb ${usb_boot_dev} ${loadaddr} ${fitname};if itest $? -eq 0;then bootm ${loadaddr};fi'
 
 # --- inc_test_loop, note SETEXPR treat number as HexaDecimal 
 # --- inc_test_loop
@@ -63,57 +60,28 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 # setenv test1_boot_usb 'echo "TEST1_BOOT_USB..."; run inc_test_loop_save; run test_info; run boot_usb'
 # setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run boot_usb'
 
-# how to setup a warm reboot test 
-# from console the test machine, ususally in "gnu screen"  
-# > run init_test_loop
-# > setenv bootcmd 'run test2_boot_usb'
-# > saveenv
-# > run bootcmd
-# wait until linux booted to shell prompt, with "login" prompt
-# enter "root" as user name
-# from shell prompt: 
-# > /diag/startup-test/init-test-autoexec.sh
-# switch to shell "GNU screen" root directory, for example in "/test/castle-peak/usb2" 
-# make sure "GNU screen" log file is turn on, init log file "screenlog.0" to blank 
-# > rm  screenlog.0
-# switch back to console of test machine, say "gnu screen/usb2"
-# > reboot
-
-# how to check reboot test is ok 
-# we want to check that u-boot "test_loop" counter macthed linux "TEST LOOP" counter
-#> cat screenlog.0|tr-ascii | grep "###"
-# we can easily find in log file "screenlog.0" because u-boot/linux loop counters messages has been prefixed with "###"
-#> cat screenlog.0|tr-ascii | grep "###"
-### test_loop= 1; test_loop_end= 1000000 ###
-# INFO: ### TEST LOOP: 1 =0x1, System will reboot NOW ###
-# test_loop=2; test_loop_end=1000000 ###
-# INFO: ### TEST LOOP: 2 =0x2, System will reboot NOW ###
-### test_loop=3; test_loop_end=1000000 ###
-# INFO: ### TEST LOOP: 3 =0x3, System will reboot NOW ###
-### test_loop=4; test_loop_end=1000000 ###
-#INFO: ### TEST LOOP: 4 =0x4, System will reboot NOW ###
-### test_loop=5; test_loop_end=1000000 ###
-# INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
-### test_loop=6; test_loop_end=1000000 ###
-
-setenv scx_params 'root=/dev/sda1 rw rootwait'
-setenv set_net_params 'setenv bootinfo_netparams ip=$ipaddr:$serverip:$gatwayip:$netmask:marvell:eth1: nfsroot=$serverip:/srv/nfs/,tcp,v3'
-setenv scx_boot_params 'run set_net_params; setenv bootargs $console $extra_params $scx_params $bootinfo_netparams $cpuidle earlyprintk rootfstype=ext4 loglevel=8'
+setenv scx_name	  scx
+setenv root_dev   sda3
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
 # setenv scx_params 'root=/dev/sdb3 rw'
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
-
-setenv fitname      diag-${machine_name}.fit
-setenv fdt_name     diag-${machine_name}.dtb 
-setenv image_name  Image-${machine_name}.bin
-
 setenv ramfs_name  initramfs-${machine_name}.cpio
-setenv scx_bootx_net 'run switch_init && run set_net_params && run scx_boot_params && run get_images && booti ${kernel_addr_r} ${ramdisk_addr_r} ${fdt_addr_r}'
-setenv scx_booti_net 'run switch_init && run set_net_params && run scx_boot_params && tftpboot ${loadaddr} ${image_name} && tftpboot ${fdt_addr_r} ${fdt_name} && booti ${kernel_addr_r} - ${fdt_addr_r}'
-setenv scx_boot_net  'run switch_init && run set_net_params && run scx_boot_params && tftpboot $loadaddr $fitname && bootm $loadaddr'
+
+setenv set_net_params 'setenv bootinfo_netparams ip=${ipaddr}:${serverip}:${gatwayip}:${netmask}:marvell:eth1: nfsroot=${serverip}:/srv/nfs/,tcp,v3'
+setenv set_scx_params 'setenv scx_params root=/dev/${root_dev} rw rootwait'
+setenv set_bootargs 'setenv bootargs ${console} ${extra_params} ${scx_params} ${bootinfo_netparams} $cpuidle earlyprintk rootfstype=ext4 loglevel=8'
+setenv scx_boot_params 'run set_net_params && run set_scx_params && run set_bootargs && pri bootargs'
+run scx_boot_params
+
+# --- scx_boot_usb
+setenv scx_boot_usb  'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb ${usb_boot_dev} ${loadaddr} ${scx_name}-${machine_name}.fit;if itest $? -eq 0;then bootm ${loadaddr};fi'
+setenv ext4_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;ext4load usb ${usb_boot_dev} ${loadaddr} ${scx_name}-${machine_name}.fit;if itest $? -eq 0;then bootm ${loadaddr};fi'
+setenv scx_booti_net 'run switch_init && run scx_boot_params && tftpboot ${loadaddr} Image-${machine_name}.bin && tftpboot ${fdt_addr_r} ${scx_name}-${machine_name}.dtb && booti ${kernel_addr_r} - ${fdt_addr_r}'
+setenv scx_boot_net  'run switch_init && run scx_boot_params && tftpboot $loadaddr ${scx_name}-${machine_name}.fit && bootm $loadaddr'
 
 @echo; echo "=== uboot env setup completed ==="; echo
 @echo; echo "### do saveenv if not promjet ###"; echo
 
+pri scx_params

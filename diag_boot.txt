@@ -24,10 +24,10 @@ pri extra_params
 
 # --- init network 
 # --- test ping 
-#@ IF_board_name SonoraPeak      setenv machine_name sonora-peak;      setenv ipaddr 192.168.1.201
-#@ IF_board_name AndersonPeak    setenv machine_name anderson-peak;    setenv ipaddr 192.168.1.204    
-#@ IF_board_name CastlePeak      setenv machine_name castle-peak;      setenv ipaddr 192.168.1.203    
-#@ IF_board_name MountRitter     setenv machine_name mount-ritter;     setenv ipaddr 192.168.1.202    
+#@ IF_board_name SonoraPeak      setenv machine_name sonora-peak;      setenv ipaddr 192.168.168.201
+#@ IF_board_name AndersonPeak    setenv machine_name anderson-peak;    setenv ipaddr 192.168.168.204    
+#@ IF_board_name CastlePeak      setenv machine_name castle-peak;      setenv ipaddr 192.168.168.203    
+#@ IF_board_name MountRitter     setenv machine_name mount-ritter;     setenv ipaddr 192.168.168.202    
 #@ IF_board_name BirchMountain   setenv machine_name birch-mountain;   setenv ipaddr 192.168.168.164  
 #@ IF_board_name BearMountain    setenv machine_name bear-mountain;    setenv ipaddr 192.168.168.163  
 #@ IF_board_name PalomaMountain  setenv machine_name paloma-mountain;  setenv ipaddr 192.168.168.162  

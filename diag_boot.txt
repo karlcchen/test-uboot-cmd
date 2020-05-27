@@ -13,7 +13,8 @@ env default -f -a
 # --- bugfix_params, for Castle-Peak only, added 'cpuidle.off=1'
 #@ IF_board_name CastlePeak setenv bugfix_params 'cpuidle.off=1'
 
-setenv usb_boot_dev 0:2
+# usb boot_dev is susally 0 or 0:1, note first partition is 1
+setenv usb_boot_dev 0:1
 # IF_board_name CastlePeak setenv usb_boot_dev 2
 
 # --- extra_params
@@ -61,7 +62,17 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 # setenv test2_boot_usb 'echo "TEST2_BOOT_USB..."; run inc_test_loop_save; run test_info; run test-ping; run boot_usb'
 
 setenv scx_name	  scx
+
+# for boot from m2 device, which is /dev/sda
 setenv root_dev   sda3
+
+# for boot from usb drive preprared from Bmap/WIC file, /dev/sdb3 partition #3 is rootfs 
+#setenv root_dev   sdb3
+
+#if booting from usb with fitname=boot-a.fit
+# setenv scx_name     boot
+# setenv machine_name a
+
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
 # setenv scx_params 'root=/dev/sdb3 rw'

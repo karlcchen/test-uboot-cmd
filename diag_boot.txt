@@ -64,24 +64,18 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 setenv scx_name	  scx
 
 # for boot from m2 device, which is /dev/sda
-setenv root_dev   sda3
 
 # for boot from usb drive preprared from Bmap/WIC file, /dev/sdb3 partition #3 is rootfs 
 #setenv root_dev   sdb3
+# new way of boot rootfs using Disk LABEL 
+setenv rootfs_label  DIAG_ROOTFS1
 
 #if booting from usb with fitname=boot-a.fit
 # setenv scx_name     boot
 # setenv machine_name a
 
-# setenv scx_params 'root=/dev/ram0 rw'
-# setenv scx_params 'initrd=${ramdisk_addr_r} rw'
-# setenv scx_params 'root=/dev/sdb3 rw'
-# setenv scx_params 'root=/dev/ram0 rw'
-# setenv scx_params 'initrd=${ramdisk_addr_r} rw'
-setenv ramfs_name  initramfs-${machine_name}.cpio
-
 setenv set_net_params 'setenv bootinfo_netparams ip=${ipaddr}:${serverip}:${gatwayip}:${netmask}:marvell:eth1: nfsroot=${serverip}:/srv/nfs/,tcp,v3'
-setenv set_scx_params 'setenv scx_params root=/dev/${root_dev} rw rootwait'
+setenv set_scx_params 'setenv scx_params root=LABEL=${rootfs_label} rw rootwait'
 setenv set_bootargs 'setenv bootargs ${console} ${extra_params} ${scx_params} ${bootinfo_netparams} $cpuidle earlyprintk rootfstype=ext4 loglevel=8'
 setenv scx_boot_params 'run set_net_params && run set_scx_params && run set_bootargs && pri bootargs'
 run scx_boot_params
@@ -91,6 +85,7 @@ setenv scx_boot_usb  'usb stop;sleep 3;usb start;run scx_boot_params;fatload usb
 setenv ext4_boot_usb 'usb stop;sleep 3;usb start;run scx_boot_params;ext4load usb ${usb_boot_dev} ${loadaddr} ${scx_name}-${machine_name}.fit;if itest $? -eq 0;then bootm ${loadaddr};fi'
 setenv scx_booti_net 'run switch_init && run scx_boot_params && tftpboot ${loadaddr} Image-${machine_name}.bin && tftpboot ${fdt_addr_r} ${scx_name}-${machine_name}.dtb && booti ${kernel_addr_r} - ${fdt_addr_r}'
 setenv scx_boot_net  'run switch_init && run scx_boot_params && tftpboot $loadaddr ${scx_name}-${machine_name}.fit && bootm $loadaddr'
+setenv fat_boot_usb  'run switch_init && run scx_boot_params && fatload usb ${usb_boot_dev} $loadaddr boot-a.fit && bootm $loadaddr'
 
 @echo; echo "=== uboot env setup completed ==="; echo
 @echo; echo "### do saveenv if not promjet ###"; echo

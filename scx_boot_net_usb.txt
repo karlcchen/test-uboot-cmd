@@ -19,8 +19,7 @@ setenv usb_boot_dev 0
 # --- extra_params
 setenv extra_params "pci=pcie_bus_safe ${bugfix_params}"
 pri extra_params
-# --- scx_params
-# setenv scx_params 'root=LABEL=A rw rootwait'
+setenv rootfs_label  DIAG_ROOTFS1
 
 # --- init network 
 # --- test ping 
@@ -93,7 +92,7 @@ setenv test_info 'echo; echo "### test_loop= 0x${test_loop}; test_loop_end= 0x${
 # INFO: ### TEST LOOP: 5 =0x5, System will reboot NOW ###
 ### test_loop=6; test_loop_end=1000000 ###
 
-setenv scx_params 'root=/dev/sdb1 rw'
+setenv scx_params 'root=LABEL=${rootfs_label} rw'
 # setenv scx_params 'root=/dev/sdb3 rw'
 # setenv scx_params 'root=/dev/ram0 rw'
 # setenv scx_params 'initrd=${ramdisk_addr_r} rw'
